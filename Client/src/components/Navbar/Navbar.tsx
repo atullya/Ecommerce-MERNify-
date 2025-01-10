@@ -1,5 +1,7 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import Logo from "../../assets/logo.png"
+import { Link } from "react-router-dom"
+import Login from "../Auth/Login"
 export default function Navbar() {
   const [isToggleOpen, setIsToggleOpen] = useState(false)
 
@@ -124,14 +126,16 @@ export default function Navbar() {
             role="navigation"
           >
             {/*      <!-- Brand logo --> */}
-            <a
+            <div
               id="WindUI"
               aria-label="WindUI logo"
               aria-current="page"
               className="flex items-center gap-2 whitespace-nowrap py-3 text-lg focus:outline-none lg:flex-1"
-              href="javascript:void(0)"
+          
             >
+                 <Link to={'/'}>
                 <img src={Logo} alt="" className="h-22 w-20 bg-emerald-500" />
+                </Link>
               {/* <svg
                 width="300"
                 height="300"
@@ -153,8 +157,10 @@ export default function Navbar() {
                   fill="rgba(255,255,255,.2)"
                 />
               </svg> */}
+                     <Link to={'/'}>
               MERNify
-            </a>
+              </Link>
+            </div>
             {/*      <!-- Mobile trigger --> */}
             <button
               className={`relative order-10 block h-10 w-10 self-center lg:hidden
@@ -200,18 +206,21 @@ export default function Navbar() {
                   className="flex items-center gap-2 py-4 transition-colors duration-300 hover:text-emerald-500 focus:text-emerald-600 focus:outline-none focus-visible:outline-none lg:px-8"
                   href="javascript:void(0)"
                 >
-                  <span>Home</span>
+                  <Link to={'/'}>
+                  <span>Home</span></Link>
                 </a>
               </li>
               <li role="none" className="flex items-stretch">
-              <a
+              <div
                   role="menuitem"
                   aria-haspopup="false"
                   className="flex items-center gap-2 py-4 transition-colors duration-300 hover:text-emerald-500 focus:text-emerald-600 focus:outline-none focus-visible:outline-none lg:px-8"
-                  href="javascript:void(0)"
+                
                 >
-                  <span>Men</span>
-                </a>
+                <Link to={'/collection'}>
+                  <span>Collection</span>
+                </Link>
+                </div>
               </li>
               <li role="none" className="flex items-stretch">
                 <a
@@ -225,7 +234,17 @@ export default function Navbar() {
               </li>
             </ul>
             {/*      <!-- Actions --> */}
-            <div className="ml-auto flex items-center justify-end px-6 lg:ml-0 lg:flex-1 lg:p-0">
+            <div className="ml-auto flex items-center justify-end px-6 gap-4 lg:ml-0 lg:flex-1 lg:p-0">
+            <li role="none" className="flex items-stretch">
+  <div
+    role="menuitem"
+    aria-haspopup="false"
+    className="flex items-center gap-2 py-2 border border-gray-500 rounded-full transition-colors duration-300 hover:text-emerald-500 focus:text-emerald-600 focus:outline-none focus-visible:outline-none lg:px-8"
+  >
+    <Login/>
+  </div>
+</li>
+
               <a
                 href="#"
                 className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-lg text-emerald-500"

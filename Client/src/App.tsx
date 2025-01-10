@@ -1,6 +1,8 @@
 
 import './App.css'
+import Banner from './components/Banner/Banner'
 import CarouselWithDelay from './components/CarouselPlugin/Carousel'
+import Hero from './components/Hero/Hero'
 
 
 import Navbar from './components/Navbar/Navbar'
@@ -15,8 +17,10 @@ function App() {
     <>
 
       <Navbar/>
-<CarouselWithDelay/>
+{/* <CarouselWithDelay/> */}
+<Hero/>
 <Home/>
+<Banner/>
        
     </>
   )

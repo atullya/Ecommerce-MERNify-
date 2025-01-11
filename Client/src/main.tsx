@@ -7,6 +7,7 @@ import { ProductProvider } from './ContextAPI/ProductContext.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Collection from './pages/Collection/Collection.tsx'
 import ProductDisplay from './components/ProductDisplay/ProductDisplay.tsx'
+import CartPage from './pages/Cart/CartPage.tsx'
 const allroutes=createBrowserRouter([
   {
     path:'/',
@@ -18,6 +19,10 @@ const allroutes=createBrowserRouter([
   },{
     path:'/product/:id',
     element:<ProductDisplay/>
+  },
+  {
+    path:'/cart',
+    element:<CartPage/>
   }
 ])
 

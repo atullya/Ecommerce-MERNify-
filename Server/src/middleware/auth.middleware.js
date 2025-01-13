@@ -15,7 +15,7 @@ export const authMiddleware = async (req, res, next) => {
 
     // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
+    // console.log(decoded);
 
     // If verification fails, token is invalid
     if (!decoded) {

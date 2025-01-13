@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import userRoutes from "./routes/user.route.js";
 import { connectDB } from "./db/dbConnection.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(cookieParser());
 
 //routes
 app.use("/api/auth", userRoutes);
+app.use("/api/admin", adminRoutes);
 
 //port
 app.get("/", (req, res) => {

@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 // Define the product schema
 const productSchema = new mongoose.Schema(
   {
-  
     name: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
@@ -11,7 +10,7 @@ const productSchema = new mongoose.Schema(
     category: { type: String, required: true },
     subCategory: { type: String, required: true },
     sizes: { type: [String], required: true }, // Array of sizes
-    date: { type: Number, required: true }, // Assuming date is a timestamp
+    date: { type: Number, required: true, default: Date.now }, // Assuming date is a timestamp
     bestseller: { type: Boolean, default: false }, // Default to false
   },
   { timestamps: true }

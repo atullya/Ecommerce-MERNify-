@@ -7,7 +7,7 @@ import Hero from './components/Hero/Hero'
 
 import Navbar from './components/Navbar/Navbar'
 import Home from './pages/Home/Home'
-
+export const BASE_URL=`http://localhost:3000`;
 function App() {
  
 

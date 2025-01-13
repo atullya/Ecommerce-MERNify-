@@ -7,6 +7,10 @@ const Home = () => {
 
   return (
     <div>
+      <h1 className="text-center mt-4 text-3xl font-bold text-indigo-600 underline decoration-dotted decoration-indigo-400 ">
+    Latest
+</h1>
+
       {products && products.length > 0 ? (
         <section
           id="Projects"
@@ -14,7 +18,7 @@ const Home = () => {
         >
           {products.slice(0,8).map((item, index) => (
             <div key={index} className="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
-              <a href="#">
+              <div >
                 <img
                   src={item.image[0]} // Assumes `item.image` is an array, displaying the first image
                   alt="Product"
@@ -46,7 +50,7 @@ const Home = () => {
                     </div>
                   </div>
                 </div>
-              </a>
+              </div>
             </div>
           ))}
         </section>

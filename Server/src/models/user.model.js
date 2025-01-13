@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema(
         validator: (v) => /^\d{10}$/.test(v),
         message: "Phone number must be exactly 10 digits",
       },
+      default:"9813324332"
     },
 
     role: {

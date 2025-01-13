@@ -3,11 +3,11 @@ import bcrypt from "bcrypt";
 import { generateToken } from "../utils/accessToken.js";
 export const registerUser = async (req, res) => {
   try {
-    const { username, email, password, phoneNumber, role } = req.body;
-    if (!username || !email || !password || !phoneNumber) {
+    const { username, email, password, role } = req.body;
+    if (!username || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "All fields are requireddd",
       });
     }
     if (password.length < 6) {
@@ -29,7 +29,7 @@ export const registerUser = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      phoneNumber,
+
       role,
     });
     const insertUser = await registerUser.save();

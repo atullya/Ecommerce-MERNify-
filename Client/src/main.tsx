@@ -4,10 +4,12 @@ import './index.css'
 
 import App from './App.tsx'
 import { ProductProvider } from './ContextAPI/ProductContext.tsx'
+
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Collection from './pages/Collection/Collection.tsx'
 import ProductDisplay from './components/ProductDisplay/ProductDisplay.tsx'
 import CartPage from './pages/Cart/CartPage.tsx'
+import { ModalProvider } from './ContextAPI/ModalContext.tsx'
 const allroutes=createBrowserRouter([
   {
     path:'/',
@@ -27,6 +29,8 @@ const allroutes=createBrowserRouter([
 ])
 
 createRoot(document.getElementById('root')!).render(
+
+  <ModalProvider>
 <ProductProvider>
 
   <StrictMode>
@@ -35,5 +39,7 @@ createRoot(document.getElementById('root')!).render(
   <RouterProvider router={allroutes}/>
   </StrictMode>,
 </ProductProvider>
+</ModalProvider>
+
 
 )

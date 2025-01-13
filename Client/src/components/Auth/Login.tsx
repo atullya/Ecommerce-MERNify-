@@ -1,35 +1,92 @@
 import React, { useState } from 'react';
-import './Login.css'; // Assuming you add the CSS animations here
+import './Login.css'; // Ensure styles include animations for slide-in/out
+import axios from 'axios';
+import { BASE_URL } from '@/App';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [isAnimating, setIsAnimating] = useState<boolean>(false);
     const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
     const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [confirmPassword, setConfirmPassword] = useState<string>('');
+    const [password, setPassword] = useState<string>('12345678');
+    const [confirmPassword, setConfirmPassword] = useState<string>('12345678');
     const [username, setUsername] = useState<string>('');
-    const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
+    const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string; username?: string }>({});
 
     const toggleModal = () => {
         if (isModalOpen) {
-            setIsAnimating(true); // Start the closing animation
+            setIsAnimating(true);
             setTimeout(() => {
-                setIsModalOpen(false); // Close the modal after animation
-                setIsAnimating(false); // Reset animation state
-            }, 500); // Match this duration with the CSS animation duration
+                setIsModalOpen(false);
+                setIsAnimating(false);
+            }, 500); // Duration should match your CSS animation
         } else {
-            setIsModalOpen(true); // Open the modal immediately
+            setIsModalOpen(true);
+        }
+    };
+const loginUser=async()=>{
+    const formData = {
+     
+        email,
+        password,
+    };
+    const response = await axios.post(`${BASE_URL}/api/auth/login`, formData, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    toast.success("Login Successfull")
+    console.log('Login successful:', response.data);
+
+    try{
+
+    }catch(error){
+        if (axios.isAxiosError(error) && error.response) {
+            // Handle API-specific error response
+            console.error('Response error:', error.response.data);
+        } else {
+            // Handle other errors (e.g., network issues)
+            console.error('Network or unexpected error:');
+        }
+    }
+}
+    const registerUser = async () => {
+        const formData = {
+            username,
+            email,
+            password,
+        };
+ 
+        try {
+            const response = await axios.post(`${BASE_URL}/api/auth/register`, formData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            console.log('Registration successful:', response.data);
+            // Handle successful registration (e.g., show a success message, redirect, etc.)
+        } catch (error) {
+            console.error('Error registering user:', error);
+            if (axios.isAxiosError(error) && error.response) {
+                // Handle API-specific error response
+                console.error('Response error:', error.response.data);
+            } else {
+                // Handle other errors (e.g., network issues)
+                console.error('Network or unexpected error:');
+            }
         }
     };
 
     const handleTabChange = (tab: 'login' | 'signup') => {
         setActiveTab(tab);
-        setErrors({}); // Clear errors when switching tabs
+        setErrors({});
     };
 
     const validateForm = () => {
-        const newErrors: { email?: string; password?: string; confirmPassword?: string } = {};
+        const newErrors: { email?: string; password?: string; confirmPassword?: string; username?: string } = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!email) {
@@ -44,26 +101,36 @@ const Login: React.FC = () => {
             newErrors.password = 'Password must be at least 6 characters';
         }
 
-        if (activeTab === 'signup' && password !== confirmPassword) {
-            newErrors.confirmPassword = 'Passwords do not match';
+        if (activeTab === 'signup') {
+            if (!username) {
+                newErrors.username = 'Username is required';
+            }
+            if (password !== confirmPassword) {
+                newErrors.confirmPassword = 'Passwords do not match';
+            }
         }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         if (validateForm()) {
-            console.log(`${activeTab} form submitted`);
-            toggleModal(); // Close modal after successful submission with animation
+            if (activeTab === 'signup') {
+                await registerUser();
+            } 
+            if(activeTab=='login'){
+                await loginUser();
+            }
+            toggleModal();
         }
     };
 
     return (
         <div>
             <button onClick={toggleModal}>
-                Login 
+                {activeTab === 'login' ? 'Login' : 'Sign Up'}
             </button>
 
             {isModalOpen && (
@@ -84,10 +151,9 @@ const Login: React.FC = () => {
                             </button>
                         </div>
                         <form onSubmit={handleSubmit}>
-                            <div className="mb-4">
                             {activeTab === 'signup' && (
                                 <div className="mb-4">
-                                    <label htmlFor="confirmPassword" className="block mb-1">Username:</label>
+                                    <label htmlFor="username" className="block mb-1">Username:</label>
                                     <input
                                         type="text"
                                         id="username"
@@ -96,9 +162,10 @@ const Login: React.FC = () => {
                                         required
                                         className="w-full p-2 border border-gray-300 rounded"
                                     />
-                                    {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
+                                    {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
                                 </div>
                             )}
+                            <div className="mb-4">
                                 <label htmlFor="email" className="block mb-1">Email:</label>
                                 <input
                                     type="email"
@@ -152,6 +219,7 @@ const Login: React.FC = () => {
                     </div>
                 </div>
             )}
+            <ToastContainer/>
         </div>
     );
 };

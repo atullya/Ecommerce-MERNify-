@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { products } from "../assets/frontend_assets/assets.ts"; // Adjust the path as needed
 
-// Product interface
 interface Product {
   _id: string;
   name: string;
@@ -15,12 +14,12 @@ interface Product {
   bestseller: boolean;
 }
 
-// CartItem interface extending Product
+
 interface CartItem extends Product {
   quantity: number;
 }
 
-// User interface
+
 interface User {
   id: string;
   name: string;

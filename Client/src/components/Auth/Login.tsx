@@ -14,6 +14,7 @@ const Login: React.FC = () => {
     const [confirmPassword, setConfirmPassword] = useState<string>('12345678');
     const [username, setUsername] = useState<string>('');
     const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string; username?: string }>({});
+    const [loggedInUser, setLoggedInUser] = useState<string | null>(null); // New state for logged-in user
 
     const toggleModal = () => {
         if (isModalOpen) {
@@ -26,39 +27,46 @@ const Login: React.FC = () => {
             setIsModalOpen(true);
         }
     };
-const loginUser=async()=>{
-    const formData = {
-     
-        email,
-        password,
-    };
-    const response = await axios.post(`${BASE_URL}/api/auth/login`, formData, {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
-    toast.success("Login Successfull")
-    console.log('Login successful:', response.data);
 
-    try{
+    const loginUser = async () => {
+        const formData = {
+            email,
+            password,
+        };
 
-    }catch(error){
-        if (axios.isAxiosError(error) && error.response) {
-            // Handle API-specific error response
-            console.error('Response error:', error.response.data);
-        } else {
-            // Handle other errors (e.g., network issues)
-            console.error('Network or unexpected error:');
+        try {
+            const response = await axios.post(`${BASE_URL}/api/auth/login`, formData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.data?.message) {
+                toast.success(response.data.message);
+                setLoggedInUser(email); // Update state with logged-in user's email
+            } else if (response.data?.status === 400) {
+                toast.warn(response.data.message);
+            }
+
+            console.log('Login successful:', response.data);
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                toast.error(error.response.data.message || 'An error occurred during login.');
+                console.error('Response error:', error.response.data);
+            } else {
+                toast.error('Network or unexpected error occurred.');
+                console.error('Network or unexpected error:', error);
+            }
         }
-    }
-}
+    };
+
     const registerUser = async () => {
         const formData = {
             username,
             email,
             password,
         };
- 
+
         try {
             const response = await axios.post(`${BASE_URL}/api/auth/register`, formData, {
                 headers: {
@@ -66,16 +74,21 @@ const loginUser=async()=>{
                 },
             });
 
+            if (response.data?.message) {
+                toast.success(response.data.message);
+            } else if (response.data?.status === 400) {
+                toast.warn(response.data.message);
+            }
+
             console.log('Registration successful:', response.data);
-            // Handle successful registration (e.g., show a success message, redirect, etc.)
         } catch (error) {
             console.error('Error registering user:', error);
             if (axios.isAxiosError(error) && error.response) {
-                // Handle API-specific error response
+                toast.error(error.response.data.message || 'An error occurred during registration.');
                 console.error('Response error:', error.response.data);
             } else {
-                // Handle other errors (e.g., network issues)
-                console.error('Network or unexpected error:');
+                toast.error('Network or unexpected error occurred.');
+                console.error('Network or unexpected error:', error);
             }
         }
     };
@@ -120,7 +133,7 @@ const loginUser=async()=>{
             if (activeTab === 'signup') {
                 await registerUser();
             } 
-            if(activeTab=='login'){
+            if(activeTab === 'login') {
                 await loginUser();
             }
             toggleModal();
@@ -129,9 +142,13 @@ const loginUser=async()=>{
 
     return (
         <div>
-            <button onClick={toggleModal}>
-                {activeTab === 'login' ? 'Login' : 'Sign Up'}
-            </button>
+            {loggedInUser ? (
+                <span>{loggedInUser}</span>
+            ) : (
+                <button onClick={toggleModal}>
+                    {activeTab === 'login' ? 'Login' : 'Sign Up'}
+                </button>
+            )}
 
             {isModalOpen && (
                 <div className="fixed top-60 inset-0 flex items-center justify-center bg-black bg-opacity-75">
@@ -219,7 +236,7 @@ const loginUser=async()=>{
                     </div>
                 </div>
             )}
-            <ToastContainer/>
+            <ToastContainer />
         </div>
     );
 };

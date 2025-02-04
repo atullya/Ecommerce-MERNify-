@@ -14,11 +14,9 @@ interface Product {
   bestseller: boolean;
 }
 
-
 interface CartItem extends Product {
   quantity: number;
 }
-
 
 interface User {
   id: string;
@@ -26,7 +24,6 @@ interface User {
   email: string;
 }
 
-// Product context type with authentication
 interface ProductContextType {
   products: Product[];
   cart: CartItem[];
@@ -36,11 +33,11 @@ interface ProductContextType {
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
   updateCartQuantity: (productId: string, quantity: number) => void;
+  getTotalCartAmount: () => number;
   login: (userData: User) => void;
   logout: () => void;
 }
 
-// Create context
 export const ProductContext = createContext<ProductContextType>({
   products: [],
   cart: [],
@@ -50,16 +47,15 @@ export const ProductContext = createContext<ProductContextType>({
   addToCart: () => {},
   removeFromCart: () => {},
   updateCartQuantity: () => {},
+  getTotalCartAmount: () => 0,
   login: () => {},
   logout: () => {},
 });
 
-// Custom hook to use the Product context
 export const useProductContext = () => {
   return useContext(ProductContext);
 };
 
-// Function to fetch products (simulated here)
 const fetchProducts = async (setProducts: React.Dispatch<React.SetStateAction<Product[]>>) => {
   try {
     const proData = products; // Simulate fetching from API or file
@@ -69,7 +65,6 @@ const fetchProducts = async (setProducts: React.Dispatch<React.SetStateAction<Pr
   }
 };
 
-// Product provider component
 export const ProductProvider = ({ children }: { children: React.ReactNode }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -82,26 +77,27 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
   }, []);
 
   useEffect(() => {
-    // Update totalItemInCart whenever cart changes
     const total = cart.reduce((acc, item) => acc + item.quantity, 0);
     setTotalItemInCart(total);
   }, [cart]);
 
-  // Function to add a product to the cart
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
       const existingProductIndex = prevCart.findIndex((item) => item._id === product._id);
       if (existingProductIndex !== -1) {
         const updatedCart = [...prevCart];
-        updatedCart[existingProductIndex].quantity += 1; // Increase quantity
+        updatedCart[existingProductIndex].quantity += 1;
         return updatedCart;
       } else {
-        return [...prevCart, { ...product, quantity: 1 }]; // Add new product with quantity 1
+        return [...prevCart, { ...product, quantity: 1 }];
       }
     });
   };
 
-  // Function to remove a product from the cart
+  const getTotalCartAmount = () => {
+    return cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  };
+
   const removeFromCart = (productId: string) => {
     setCart((prevCart) =>
       prevCart
@@ -114,7 +110,6 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     );
   };
 
-  // Function to update the cart quantity
   const updateCartQuantity = (productId: string, quantity: number) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
@@ -123,17 +118,15 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     );
   };
 
-  // Function to log in the user
   const login = (userData: User) => {
     setUser(userData);
     setIsAuthenticated(true);
   };
 
-  // Function to log out the user
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    setCart([]); // Optionally clear the cart on logout
+    setCart([]);
   };
 
   return (
@@ -147,6 +140,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         addToCart,
         removeFromCart,
         updateCartQuantity,
+        getTotalCartAmount,
         login,
         logout,
       }}

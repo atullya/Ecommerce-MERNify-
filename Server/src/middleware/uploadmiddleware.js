@@ -4,15 +4,10 @@ import path from "path";
 // Set multer storage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    // Store images in the 'uploads' directory
-    cb(null, "uploads/");
+    cb(null, "uploads/"); // Store images in the 'uploads' directory
   },
   filename: function (req, file, cb) {
-    // Create a unique file name
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
+    cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
   },
 });
 
@@ -29,7 +24,7 @@ const uploadMiddleware = multer({
   storage: storage,
   fileFilter: checkFileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // Limit file size to 5MB
+    fileSize: 5 * 1024 * 1024, // Limit file size to 5MB per file
   },
 });
 

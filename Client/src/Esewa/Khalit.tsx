@@ -1,7 +1,9 @@
+import { useProductContext } from "@/ContextAPI/ProductContext";
 import { useState } from "react";
 
-export default function KhaltiPayment() {
-  const [amount, setAmount] = useState("");
+export default function KhaltKhaiPayment() {
+  const { getTotalCartAmount } = useProductContext();
+  const [amount, setAmount] = useState(getTotalCartAmount());
   const [productName, setProductName] = useState("");
   const [transactionId, setTransactionId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -11,44 +13,37 @@ export default function KhaltiPayment() {
     setIsLoading(true);
 
     try {
-      const khaltiConfig = {
-        return_url: `http://localhost:5173/`, // URL to redirect after payment completion
-        website_url: "http://localhost:5173", // Your website URL
-        amount: Math.round(parseFloat(amount) * 100), // Khalti requires amount in paisa (100 paisa = 1 NPR)
-        purchase_order_id: transactionId,
-        purchase_order_name: productName,
-        customer_info: {
-          name: "Test User",
-          email: "test@example.com",
-          phone: "9800000000", // User's phone number
-        },
-      };
-
       const response = await fetch(
-        "https://a.khalti.com/api/v2/epayment/initiate/",
+        "http://localhost:3000/api/initiate-payment",
         {
           method: "POST",
           headers: {
-            Authorization:
-              "key live_secret_key_68791341fdd94846a146f0457ff7b455",
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(khaltiConfig),
+          body: JSON.stringify({
+            amount: amount, // Amount in NPR
+            purchase_order_id: transactionId,
+            purchase_order_name: productName,
+            customer_info: {
+              name: "Test User",
+              email: "test@example.com",
+              phone: "9800000000",
+            },
+          }),
         }
       );
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Khalti API Error:", errorData);
         throw new Error(
-          `Khalti payment initiation failed: ${JSON.stringify(errorData)}`
+          `Payment initiation failed: ${JSON.stringify(errorData)}`
         );
       }
 
       const khaltiResponse = await response.json();
       console.log("Khalti payment initiated:", khaltiResponse);
 
-      // Redirect to Khalti payment page
+      // Redirect user to Khalti payment page
       window.location.href = khaltiResponse.payment_url;
     } catch (error) {
       console.error("Payment error:", error);
@@ -74,7 +69,7 @@ export default function KhaltiPayment() {
               id="amount"
               type="number"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => setAmount(Number(e.target.value))}
               required
               className="w-full px-3 py-2 border rounded-md"
             />

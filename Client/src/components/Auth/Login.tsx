@@ -39,11 +39,11 @@ const Login: React.FC = () => {
       email,
       password,
     };
-    if (email === "admin@gmail.com" && password === "12345678") {
-        navigate('/adminhome'); // Navigate to admin home page
-        toast.success("Admin login successful!"); // Optional: Show success message
-        return; // Exit the function to prevent further execution
-      }
+    // if (email === "admin@gmail.com" && password === "12345678") {
+    //     navigate('/adminhome'); // Navigate to admin home page
+    //     toast.success("Admin login successful!"); // Optional: Show success message
+    //     return; // Exit the function to prevent further execution
+    //   }
     try {
       const response = await axios.post(
         `${BASE_URL}/api/auth/login`,
@@ -52,12 +52,16 @@ const Login: React.FC = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         }
       );
-     
 
       if (response.data?.message) {
-        
+        if (response.data?.role === "admin") {
+          navigate("/adminhome");
+          toast.success("Admin login successful!");
+          return;
+        }
         toast.success(response.data.message);
         setLoggedInUser(email); // Update state with logged-in user's email
       } else if (response.data?.status === 400) {

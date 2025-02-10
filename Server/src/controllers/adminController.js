@@ -1,35 +1,45 @@
 import Product from "../models/product.model.js";
+
 export const uploadProducts = async (req, res) => {
   try {
     const { name, description, price, category, subCategory, sizes } = req.body;
 
-    if (!name || !description || !price || !req.file) {
+    // Ensure all fields are provided
+    if (
+      !name ||
+      !description ||
+      !price ||
+      !req.files ||
+      req.files.length === 0
+    ) {
       return res.status(400).json({
-        message: "All fields are required, including an image!",
+        message: "All fields are required, including at least one image!",
       });
     }
 
-    // Image path
-    const imageUrl = req.file.path;
+    // Extract image paths from uploaded files
+    const imageUrls = req.files.map((file) => file.path);
 
-    //insert in database
+    // Insert into database
     const proDetails = new Product({
       name,
       description,
       price,
-      image: imageUrl,
+      image: imageUrls, // Store multiple images
       category,
       subCategory,
       sizes,
     });
+
     const insertProduct = await proDetails.save();
-    // Save product to database (assuming a function saveProduct exists)
-    // await saveProduct({ name, description, price, category, subCategory, imageUrl });
+
     if (!insertProduct) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Failed to insert product" });
+      return res.status(400).json({
+        success: false,
+        message: "Failed to insert product",
+      });
     }
+
     return res.status(200).json({
       success: true,
       message: "Successfully uploaded a new product!",
@@ -39,11 +49,40 @@ export const uploadProducts = async (req, res) => {
         price,
         category,
         subCategory,
-        imageUrl,
+        imageUrls,
         sizes,
       },
     });
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    console.error("Upload error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const getProducts = async (req, res) => {
+  try {
+    const products=await Product.find({});
+    if (!products) {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to fetch products",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Successfully fetched all products!",
+      data: products,
+    });
+  } catch (error) {
+    console.error("Upload error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };

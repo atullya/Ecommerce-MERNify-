@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar/Navbar";
 import { useProductContext } from "@/ContextAPI/ProductContext";
 import { Link } from "react-router-dom";
-
+import esewa from "../.../../../assets/esewa.png";
+import khalti from "../.../../../assets/khalti.png";
+import { get } from "node:http";
 const CartPage = () => {
   const { cart, removeFromCart, updateCartQuantity, getTotalCartAmount } =
     useProductContext();
@@ -24,6 +26,10 @@ const CartPage = () => {
   };
 
   const handleProceedToCheckout = () => {
+    if (cart.length === 0) {
+      alert("Cart is empty");
+      return;
+    }
     setIsModalOpen(true);
   };
 
@@ -125,12 +131,28 @@ const CartPage = () => {
               <h3>${getTotalCartAmount()}</h3>
             </div>
           </div>
-          <button
+          {getTotalCartAmount() == 0 ? (
+            <button
+              onClick={handleProceedToCheckout}
+              // disabled
+              className="w-60 h-14 bg-red-500 text-white font-semibold text-lg border-none outline-none cursor-pointer"
+            >
+              Proceed to Checkout
+            </button>
+          ) : (
+            <button
+              onClick={handleProceedToCheckout}
+              className="w-60 h-14 bg-red-500 text-white font-semibold text-lg border-none outline-none cursor-pointer"
+            >
+              Proceed to Checkout
+            </button>
+          )}
+          {/* <button
             onClick={handleProceedToCheckout}
             className="w-60 h-14 bg-red-500 text-white font-semibold text-lg border-none outline-none cursor-pointer"
           >
             Proceed to Checkout
-          </button>
+          </button> */}
         </div>
 
         {/* Promo Code Section */}
@@ -157,26 +179,20 @@ const CartPage = () => {
 
             <div className="flex flex-col gap-4">
               <label className="flex items-center">
-                <input
+                {/* <input
                   type="checkbox"
                   checked={selectedPayment === "eSewa"}
                   onChange={() => setSelectedPayment("eSewa")}
                   className="mr-2"
-                />
+                /> */}
                 <Link to="/payment" className="text-blue-500">
-                  Pay with eSewa
+                  <img src={esewa} alt="" className="h-20 w-22" />
                 </Link>
               </label>
 
               <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={selectedPayment === "Khalti"}
-                  onChange={() => setSelectedPayment("Khalti")}
-                  className="mr-2"
-                />
                 <Link to={"/khalti"} className="text-blue-500">
-                  Pay with Khalti
+                  <img src={khalti} alt="" className="h-30 w-32 ml-2" />
                 </Link>
               </label>
             </div>
@@ -188,12 +204,12 @@ const CartPage = () => {
               >
                 Cancel
               </button>
-              <button
+              {/* <button
                 onClick={handlePayment}
                 className="px-4 py-2 bg-red-500 text-white rounded"
               >
                 Pay Now
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

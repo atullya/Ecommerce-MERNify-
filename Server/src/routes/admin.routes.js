@@ -1,7 +1,12 @@
 import express from "express";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { checkAdmin } from "../middleware/admin.middleware.js";
-import { getProducts, uploadProducts } from "../controllers/adminController.js";
+import {
+  deleteProduct,
+  getProducts,
+  updateProduct,
+  uploadProducts,
+} from "../controllers/adminController.js";
 import uploadMiddleware from "../middleware/uploadmiddleware.js";
 
 const adminRoutes = express.Router();
@@ -19,5 +24,7 @@ adminRoutes.post(
   uploadProducts
 );
 adminRoutes.get("/products", getProducts);
+adminRoutes.delete("/delete/:id", deleteProduct);
+adminRoutes.patch("/update/:id", updateProduct);
 
 export default adminRoutes;

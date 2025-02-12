@@ -65,7 +65,7 @@ export const uploadProducts = async (req, res) => {
 
 export const getProducts = async (req, res) => {
   try {
-    const products=await Product.find({});
+    const products = await Product.find({});
     if (!products) {
       return res.status(400).json({
         success: false,
@@ -83,6 +83,57 @@ export const getProducts = async (req, res) => {
       success: false,
       message: "Internal server error",
       error: error.message,
+    });
+  }
+};
+
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteProduct = await Product.findByIdAndDelete(id);
+    if (!deleteProduct) {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to delete product",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Successfully deleted product",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, price, category, subCategory, sizes } = req.body;
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { name, description, price, category, subCategory, sizes }, // Update object
+      { new: true } // Returns the updated document
+    );
+
+    if (!updatedProduct) {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to update product",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Successfully updated product",
+      data: updatedProduct, // Optional: Return updated product data
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };

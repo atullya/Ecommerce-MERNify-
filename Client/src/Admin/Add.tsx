@@ -12,12 +12,12 @@ const Add = () => {
     null,
     null,
   ]);
-  const [productName, setProductName] = useState<string>("prod1");
-  const [productDescription, setProductDescription] = useState<string>("good");
+  const [productName, setProductName] = useState<string>("");
+  const [productDescription, setProductDescription] = useState<string>("");
   const [productCategory, setProductCategory] = useState<string>("Men");
   const [productSubCategory, setProductSubCategory] =
     useState<string>("topwear");
-  const [productPrice, setProductPrice] = useState<number>(60);
+  const [productPrice, setProductPrice] = useState<number>(0);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [isBestSeller, setIsBestSeller] = useState<boolean>(false);
 
@@ -53,6 +53,7 @@ const Add = () => {
         isBestSeller,
         images,
       });
+
       const formData = new FormData();
       formData.append("name", productName);
       formData.append("description", productDescription);
@@ -61,11 +62,13 @@ const Add = () => {
       formData.append("price", productPrice.toString());
       formData.append("sizes", selectedSizes.join(","));
       formData.append("bestseller", isBestSeller.toString());
+
       images.forEach((image) => {
         if (image) {
           formData.append("images", image);
         }
       });
+
       const res = await axios.post(
         "http://localhost:3000/api/admin/upload",
         formData,
@@ -76,21 +79,26 @@ const Add = () => {
           withCredentials: true,
         }
       );
+
       console.log(res.data);
       if (res.data?.success) {
         toast.success(res.data.message);
-        // ✅ Reset state using functional updates to avoid batching issues
-        setImages(() => [null, null, null, null]);
-        setProductName(() => "");
-        setProductDescription(() => "");
-        setProductCategory(() => "");
-        setProductSubCategory(() => "");
-        setProductPrice(() => 0);
-        setSelectedSizes(() => []);
-        setIsBestSeller(() => false);
+
+        // ✅ Reset state properly
+        setTimeout(() => {
+          setImages([null, null, null, null]);
+          setProductName("");
+          setProductDescription("");
+          setProductCategory("Men");
+          setProductSubCategory("topwear");
+          setProductPrice(0);
+          setSelectedSizes([]);
+          setIsBestSeller(false);
+        }, 100);
       }
     } catch (error) {
       console.error("Error adding product:", error);
+      toast.error("Failed to add product");
     }
   };
 
@@ -108,22 +116,27 @@ const Add = () => {
         >
           <p className="mb-2">Upload Images</p>
           <div className="flex gap-2">
-            {images.map((image, index) => (
-              <label htmlFor={`image${index + 1}`} key={index}>
-                <img
-                  src={image ? URL.createObjectURL(image) : upload_area}
-                  className="w-20"
-                  alt={`Upload Preview ${index + 1}`}
-                />
-                <input
-                  type="file"
-                  id={`image${index + 1}`}
-                  hidden
-                  accept="image/*"
-                  onChange={(e) => handleImageChange(index, e)}
-                />
-              </label>
-            ))}
+            {images.map((image, index) => {
+              const imageUrl = image ? URL.createObjectURL(image) : upload_area;
+
+              return (
+                <label htmlFor={`image${index + 1}`} key={index}>
+                  <img
+                    src={imageUrl}
+                    className="w-20"
+                    alt={`Upload Preview ${index + 1}`}
+                    onLoad={() => image && URL.revokeObjectURL(imageUrl)} // ✅ Fix
+                  />
+                  <input
+                    type="file"
+                    id={`image${index + 1}`}
+                    hidden
+                    accept="image/*"
+                    onChange={(e) => handleImageChange(index, e)}
+                  />
+                </label>
+              );
+            })}
           </div>
 
           <div>
@@ -133,6 +146,7 @@ const Add = () => {
               placeholder="Type Here"
               required
               className="w-full max-w-[500px] px-3 py-2"
+              value={productName}
               onChange={(e) => setProductName(e.target.value)}
             />
           </div>
@@ -141,6 +155,7 @@ const Add = () => {
             <textarea
               placeholder="Write Content Here"
               className="w-full max-w-[500px] px-3 py-2"
+              value={productDescription}
               onChange={(e) => setProductDescription(e.target.value)}
             />
           </div>
@@ -150,9 +165,9 @@ const Add = () => {
               <p className="mb-2">Product Category</p>
               <select
                 className="w-full px-3 py-2"
+                value={productCategory}
                 onChange={(e) => setProductCategory(e.target.value)}
               >
-                <option value="">Select Category</option>
                 <option value="Men">Men</option>
                 <option value="Women">Women</option>
                 <option value="Kids">Kids</option>
@@ -163,23 +178,23 @@ const Add = () => {
               <p className="mb-2">Sub Category</p>
               <select
                 className="w-full px-3 py-2"
+                value={productSubCategory}
                 onChange={(e) => setProductSubCategory(e.target.value)}
               >
-                <option value="">Select Sub-Category</option>
-                <option value="Topwear">Topwear</option>
-                <option value="Bottomwear">Bottomwear</option>
-                <option value="Winterwear">Winterwear</option>
+                <option value="topwear">Topwear</option>
+                <option value="bottomwear">Bottomwear</option>
+                <option value="winterwear">Winterwear</option>
               </select>
             </div>
 
             <div>
               <p className="mb-2">Product Price</p>
               <input
-                placeholder="25"
                 type="number"
                 min={0}
                 className="w-full px-3 py-2 sm:w-[120px]"
-                onChange={(e) => setProductPrice(parseInt(e.target.value) || 0)}
+                value={productPrice}
+                onChange={(e) => setProductPrice(parseInt(e.target.value))}
               />
             </div>
           </div>

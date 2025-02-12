@@ -10,6 +10,7 @@ import adminRoutes from "./routes/admin.routes.js";
 import { connectDB } from "./db/dbConnection.js";
 import { fileURLToPath } from "url";
 import path from "path";
+import cartRoutes from "./routes/addToCart.routes.js";
 const app = express();
 
 // Middleware
@@ -90,7 +91,7 @@ app.post("/api/initiate-payment", async (req, res) => {
 // Routes
 app.use("/api/auth", userRoutes);
 app.use("/api/admin", adminRoutes);
-
+app.use("/api/cart", cartRoutes);
 // Default Route
 app.get("/", (req, res) => {
   res.send("Hello, Server is running!");

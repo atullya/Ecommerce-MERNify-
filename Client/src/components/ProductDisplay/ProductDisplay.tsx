@@ -4,6 +4,8 @@ import Navbar from "../Navbar/Navbar";
 import { useProductContext } from "@/ContextAPI/ProductContext";
 import starIcon from "../../assets/frontend_assets/star_icon.png";
 import starDullIcon from "../../assets/frontend_assets/star_dull_icon.png";
+import { getTokenFromLocalStorage } from "../LocalStorage";
+import { toast, ToastContainer } from "react-toastify";
 
 const ProductDisplay = () => {
   const { products, addToCart, cart } = useProductContext(); // Destructure cart from context
@@ -19,6 +21,12 @@ const ProductDisplay = () => {
   }
 
   const handleAddToCart = () => {
+    const token = getTokenFromLocalStorage();
+    if (!token) {
+      toast.info("Please Login to add to cart");
+      // alert("Please Login to add to cart");
+      return;
+    }
     addToCart(product);
   };
 
@@ -30,27 +38,59 @@ const ProductDisplay = () => {
           {/* Image Section */}
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex flex-row lg:flex-col gap-2">
+              {/* {product.image?.length > 0 ? (
+                        <img
+                          src={`http://localhost:3000/${product.image[0].replace(
+                            /\\/g,
+                            "/"
+                          )}`}
+                          alt={product.name}
+                        className="h-20 lg:h-24 w-20 lg:w-24 object-cover"
+                        />
+                      ) : (
+                        <span>No Image</span>
+                      )} */}
               {product.image.map((img, index) => (
+                <img
+                  src={`http://localhost:3000/${product.image[index].replace(
+                    /\\/g,
+                    "/"
+                  )}`}
+                  alt={product.name}
+                  className="h-20 lg:h-24 w-20 lg:w-24 object-cover"
+                />
+              ))}
+              {/* {product.image.map((img, index) => (
                 <img
                   key={index}
                   className="h-20 lg:h-24 w-20 lg:w-24 object-cover"
                   src={img}
                   alt={`${product.name} - ${index + 1}`}
                 />
-              ))}
+              ))} */}
             </div>
             <div>
               <img
+                src={`http://localhost:3000/${product.image[0].replace(
+                  /\\/g,
+                  "/"
+                )}`}
+                alt={product.name}
+                className="w-full lg:w-[320px] lg:h-[410px] object-cover"
+              />
+              {/* <img
                 className="w-full lg:w-[320px] lg:h-[410px] object-cover"
                 src={product.image[0]}
                 alt={product.name}
-              />
+              /> */}
             </div>
           </div>
 
           {/* Product Details Section */}
           <div className="flex flex-col lg:ml-16">
-            <h1 className="text-gray-700 text-2xl lg:text-4xl font-bold">{product.name}</h1>
+            <h1 className="text-gray-700 text-2xl lg:text-4xl font-bold">
+              {product.name}
+            </h1>
             <div className="flex items-center gap-2 mt-3 text-gray-800 text-lg">
               {[...Array(4)].map((_, i) => (
                 <img key={i} src={starIcon} alt="Star" />
@@ -64,7 +104,9 @@ const ProductDisplay = () => {
             </div>
             <p className="text-gray-600">{product.description}.</p>
             <div className="mt-5">
-              <h2 className="text-gray-500 text-lg font-semibold">Select Size</h2>
+              <h2 className="text-gray-500 text-lg font-semibold">
+                Select Size
+              </h2>
               <div className="flex gap-3 mt-4">
                 {product.sizes.map((size, index) => (
                   <div
@@ -84,6 +126,7 @@ const ProductDisplay = () => {
             </div>
           </div>
         </div>
+        <ToastContainer />
       </div>
     </>
   );

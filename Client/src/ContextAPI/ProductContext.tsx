@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { products } from "../assets/frontend_assets/assets.ts"; // Adjust the path as needed
+import axios from "axios";
+import { BASE_URL } from "@/App.tsx";
 
 interface Product {
   _id: string;
@@ -56,16 +58,25 @@ export const useProductContext = () => {
   return useContext(ProductContext);
 };
 
-const fetchProducts = async (setProducts: React.Dispatch<React.SetStateAction<Product[]>>) => {
+const fetchProducts = async (
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>
+) => {
   try {
     const proData = products; // Simulate fetching from API or file
-    setProducts(proData);
+    const pro = await axios.get(`${BASE_URL}/api/admin/products`);
+    console.log("data", pro.data);
+    // setProducts(proData);
+    setProducts(pro.data.data);
   } catch (error) {
     console.error("Failed to fetch products:", error);
   }
 };
 
-export const ProductProvider = ({ children }: { children: React.ReactNode }) => {
+export const ProductProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [totalItemInCart, setTotalItemInCart] = useState(0);
@@ -83,7 +94,9 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
 
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
-      const existingProductIndex = prevCart.findIndex((item) => item._id === product._id);
+      const existingProductIndex = prevCart.findIndex(
+        (item) => item._id === product._id
+      );
       if (existingProductIndex !== -1) {
         const updatedCart = [...prevCart];
         updatedCart[existingProductIndex].quantity += 1;

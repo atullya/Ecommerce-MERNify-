@@ -24,11 +24,23 @@ const Home = () => {
             >
               <Link to={`/product/${item._id}`}>
                 <div>
-                  <img
+                {item.image?.length > 0 ? (
+                        <img
+                          src={`http://localhost:3000/${item.image[0].replace(
+                            /\\/g,
+                            "/"
+                          )}`}
+                          alt={item.name}
+                            className="h-80 w-72 object-cover rounded-t-xl"
+                        />
+                      ) : (
+                        <span>No Image</span>
+                      )}
+                  {/* <img
                     src={item.image[0]} // Assumes `item.image` is an array, displaying the first image
                     alt="Product"
                     className="h-80 w-72 object-cover rounded-t-xl"
-                  />
+                  /> */}
                   <div className="px-4 py-3 w-72">
                     <span className="text-gray-400 mr-3 uppercase text-xs">
                       {item.subCategory}

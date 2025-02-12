@@ -146,17 +146,29 @@ const Collection = () => {
             {filterProducts.map((item) => (
               <div key={item._id}>
               <Link to={`/product/${item._id}`}>
-                  <img
+              {item.image?.length > 0 ? (
+                        <img
+                          src={`http://localhost:3000/${item.image[0].replace(
+                            /\\/g,
+                            "/"
+                          )}`}
+                          alt={item.name}
+                           className="h-80 w-72 object-cover rounded-t-xl"
+                        />
+                      ) : (
+                        <span>No Image</span>
+                      )}
+                  {/* <img
                     src={item.image[0]} // Assumes `item.image` is an array, displaying the first image
                     alt={item.name}
                     className="h-80 w-72 object-cover rounded-t-xl"
-                  />
+                  /> */}
                   <div className="px-4 py-3 w-72">
                     <span className="text-gray-400 mr-3 uppercase text-xs">
                       {item.subCategory}
                     </span>
                     <p className="text-lg font-bold text-black truncate block capitalize">
-                      {item.name}
+                      {item.name.slice(0,20)}
                     </p>
                     <div className="flex items-center">
                       <p className="text-lg font-semibold text-black cursor-auto my-3">

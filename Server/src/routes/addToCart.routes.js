@@ -62,6 +62,52 @@ cartRoutes.get("/:userId", async (req, res) => {
   }
 });
 
+// Update Cart Item Quantity
+cartRoutes.put("/update", async (req, res) => {
+  const { userId, productId, quantity } = req.body;
+
+  try {
+    const cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Cart not found" });
+    }
+
+    const itemIndex = cart.items.findIndex(
+      (item) => item.productId.toString() === productId
+    );
+
+    if (itemIndex > -1) {
+      if (quantity > 0) {
+        cart.items[itemIndex].quantity = quantity;
+      } else {
+        // Remove item if quantity is 0
+        cart.items.splice(itemIndex, 1);
+      }
+    } else {
+      return res
+        .status(404)
+        .json({ success: false, message: "Item not found in cart" });
+    }
+
+    await cart.save();
+    await cart.populate("items.productId"); // Ensure updated cart details
+
+    // Recalculate total price
+    const totalPrice = cart.items.reduce((total, item) => {
+      return total + item.quantity * (item.productId?.price || 0);
+    }, 0);
+
+    res.status(200).json({ success: true, cart, totalPrice });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Error updating quantity" });
+  }
+});
+
 // Remove from Cart
 cartRoutes.delete("/remove", async (req, res) => {
   const { userId, productId } = req.body;

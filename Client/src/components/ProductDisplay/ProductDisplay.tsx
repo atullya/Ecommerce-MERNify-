@@ -51,14 +51,16 @@ const ProductDisplay = () => {
                         <span>No Image</span>
                       )} */}
               {product.image.map((img, index) => (
-                <img
-                  src={`http://localhost:3000/${product.image[index].replace(
-                    /\\/g,
-                    "/"
-                  )}`}
-                  alt={product.name}
-                  className="h-20 lg:h-24 w-20 lg:w-24 object-cover"
-                />
+                <div key={index}>
+                  <img
+                    src={`http://localhost:3000/${product.image[index].replace(
+                      /\\/g,
+                      "/"
+                    )}`}
+                    alt={product.name}
+                    className="h-20 lg:h-24 w-20 lg:w-24 object-cover"
+                  />
+                </div>
               ))}
               {/* {product.image.map((img, index) => (
                 <img

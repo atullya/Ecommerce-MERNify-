@@ -5,6 +5,7 @@ import { BASE_URL } from "@/App";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { getTokenFromLocalStorage, storeTokens } from "../LocalStorage";
 
 const Login: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -55,15 +56,25 @@ const Login: React.FC = () => {
           withCredentials: true,
         }
       );
-
+      console.log(response.data);
       if (response.data?.message) {
         if (response.data?.role === "admin") {
           navigate("/adminhome");
           toast.success("Admin login successful!");
           return;
         }
+        if (response.data?.role === "user") {
+          navigate("/");
+          storeTokens(response.data.accessToken);
+          localStorage.setItem("loggedInUser", email);
+          localStorage.setItem("userId", response.data._id);
+
+          toast.success("Login successful!");
+          setLoggedInUser(email); // Also update state
+
+          return;
+        }
         toast.success(response.data.message);
-        setLoggedInUser(email); // Update state with logged-in user's email
       } else if (response.data?.status === 400) {
         toast.warn(response.data.message);
       }

@@ -8,3 +8,7 @@ export const storeTokens = (tokens: any) => {
 export const getTokenFromLocalStorage = () => {
     return localStorage.getItem("accessToken");
 }
+
+export const storeId=(id:any)=>{
+    localStorage.setItem("userId",id);
+}

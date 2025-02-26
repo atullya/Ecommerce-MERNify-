@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar/Navbar";
 import { useProductContext } from "@/ContextAPI/ProductContext";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import esewa from "../.../../../assets/esewa.png";
 import khalti from "../.../../../assets/khalti.png";
 import { get } from "node:http";
@@ -12,6 +12,7 @@ const CartPage = () => {
   const { cart, removeFromCart, updateCartQuantity, getTotalCartAmount } =
     useProductContext();
   const [cartItem, setCartItem] = useState([]);
+
   const [price, setPrice] = useState<{ totalPrice: number } | null>(null);
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,7 +73,7 @@ const CartPage = () => {
   };
 
   const handleProceedToCheckout = () => {
-    if (cart.length === 0) {
+    if (cartItem.length == 0) {
       alert("Cart is empty");
       return;
     }
@@ -248,21 +249,23 @@ const CartPage = () => {
 
             <div className="flex flex-col gap-4">
               <label className="flex items-center">
-                {/* <input
-                    type="checkbox"
-                    checked={selectedPayment === "eSewa"}
-                    onChange={() => setSelectedPayment("eSewa")}
-                    className="mr-2"
-                  /> */}
-                <Link to="/payment" className="text-blue-500">
+                <NavLink
+                  to="/payment"
+                  state={{ totalAmount: price?.totalPrice ?? 0 }}
+                  className="text-blue-500"
+                >
                   <img src={esewa} alt="" className="h-20 w-22" />
-                </Link>
+                </NavLink>
               </label>
 
               <label className="flex items-center">
-                <Link to={"/khalti"} className="text-blue-500">
+                <NavLink
+                  to={"/khalti"}
+                  state={{ totalAmount: price?.totalPrice ?? 0 }}
+                  className="text-blue-500"
+                >
                   <img src={khalti} alt="" className="h-30 w-32 ml-2" />
-                </Link>
+                </NavLink>
               </label>
             </div>
 

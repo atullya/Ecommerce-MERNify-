@@ -1,14 +1,18 @@
 import { useProductContext } from "@/ContextAPI/ProductContext";
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 export default function KhaltKhaiPayment() {
   const { getTotalCartAmount } = useProductContext();
-  const [amount, setAmount] = useState(getTotalCartAmount());
+  const location = useLocation();
+  const totalAmount = location.state?.totalAmount || getTotalCartAmount();
+  
+  const [amount, setAmount] = useState(totalAmount);
   const [productName, setProductName] = useState("");
   const [transactionId, setTransactionId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handlePayment = async (e: React.FormEvent) => {
+  const handlePayment = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -21,7 +25,7 @@ export default function KhaltKhaiPayment() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            amount: amount, // Amount in NPR
+            amount: totalAmount, // Fixed amount
             purchase_order_id: transactionId,
             purchase_order_name: productName,
             customer_info: {
@@ -43,7 +47,6 @@ export default function KhaltKhaiPayment() {
       const khaltiResponse = await response.json();
       console.log("Khalti payment initiated:", khaltiResponse);
 
-      // Redirect user to Khalti payment page
       window.location.href = khaltiResponse.payment_url;
     } catch (error) {
       console.error("Payment error:", error);
@@ -69,9 +72,8 @@ export default function KhaltKhaiPayment() {
               id="amount"
               type="number"
               value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
-              required
-              className="w-full px-3 py-2 border rounded-md"
+              disabled
+              className="w-full px-3 py-2 border rounded-md bg-gray-200 cursor-not-allowed"
             />
           </div>
           <div>
@@ -87,10 +89,7 @@ export default function KhaltKhaiPayment() {
             />
           </div>
           <div>
-            <label
-              htmlFor="transactionId"
-              className="block text-sm font-medium"
-            >
+            <label htmlFor="transactionId" className="block text-sm font-medium">
               Transaction ID
             </label>
             <input

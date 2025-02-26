@@ -1,6 +1,6 @@
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useProductContext } from "@/ContextAPI/ProductContext";
-
-import React, { useState, ChangeEvent, FormEvent } from "react";
 
 interface FormData {
   amount: string;
@@ -13,6 +13,24 @@ const EsewaPayment: React.FC = () => {
   const secretKey = "8gBm/:&EnhH.1/q"; // Replace with your actual secret key
   const successUrl = "http://yourdomain.com/payment-success"; // Replace with your success URL
   const failureUrl = "http://yourdomain.com/payment-failure"; // Replace with your failure URL
+
+  const { getTotalCartAmount } = useProductContext();
+  const location = useLocation();
+  
+  // Get the total amount from context or URL state
+  const totalAmount = Number(location.state?.totalAmount) || getTotalCartAmount();
+
+  // State for form data
+  const [formData, setFormData] = useState<FormData>({
+    amount: totalAmount.toFixed(2), // Ensure it's a valid numeric string
+    productName: "",
+    transactionId: "",
+  });
+
+  // Update amount if totalAmount changes
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, amount: totalAmount.toFixed(2) }));
+  }, [totalAmount]);
 
   // Function to generate eSewa signature
   const generateEsewaSignature = async (
@@ -37,6 +55,17 @@ const EsewaPayment: React.FC = () => {
     return btoa(String.fromCharCode(...new Uint8Array(signature)));
   };
 
+  // Handle form input changes
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: name === "amount" ? value.replace(/[^0-9.]/g, "") : value, // Ensure only numbers for amount
+    }));
+  };
+
+  // Handle form submission
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -47,21 +76,25 @@ const EsewaPayment: React.FC = () => {
       return;
     }
 
-    const transactionUuid = `txn-${Date.now()}`; // Unique identifier for the transaction
+    const transactionUuid = `txn-${Date.now()}`; // Unique transaction identifier
 
     try {
+      // Ensure amount is formatted correctly
+      const formattedAmount = parseFloat(amount).toFixed(2);
+
+      // Generate signature
       const signature = await generateEsewaSignature(
         secretKey,
-        amount,
+        formattedAmount,
         transactionUuid,
         merchantCode
       );
 
       // Prepare eSewa payment parameters
       const esewaConfig = {
-        amount,
+        amount: formattedAmount,
         tax_amount: "0",
-        total_amount: amount,
+        total_amount: formattedAmount,
         transaction_uuid: transactionUuid,
         product_code: merchantCode,
         product_service_charge: "0",
@@ -72,18 +105,18 @@ const EsewaPayment: React.FC = () => {
         signature,
       };
 
-      // Create a form dynamically and submit to eSewa
+      // Create and submit the form dynamically
       const form = document.createElement("form");
       form.method = "POST";
       form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
 
-      for (const [key, value] of Object.entries(esewaConfig)) {
+      Object.entries(esewaConfig).forEach(([key, value]) => {
         const input = document.createElement("input");
         input.type = "hidden";
         input.name = key;
         input.value = value;
         form.appendChild(input);
-      }
+      });
 
       document.body.appendChild(form);
       form.submit();
@@ -92,18 +125,7 @@ const EsewaPayment: React.FC = () => {
       alert("An error occurred. Please try again.");
     }
   };
-  const { getTotalCartAmount } = useProductContext();
-  const [formData, setFormData] = useState<FormData>({
-    amount: getTotalCartAmount().toString(),
-    productName: "",
-    transactionId: "",
-  });
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+
   return (
     <div className="container">
       <h1>eSewa Payment</h1>

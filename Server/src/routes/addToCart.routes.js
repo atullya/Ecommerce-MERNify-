@@ -121,9 +121,23 @@ cartRoutes.delete("/remove", async (req, res) => {
         .json({ success: false, message: "Cart not found" });
     }
 
-    cart.items = cart.items.filter(
-      (item) => item.productId.toString() !== productId
+    // Find the item in the cart
+    const itemIndex = cart.items.findIndex(
+      (item) => item.productId.toString() === productId
     );
+
+    if (itemIndex === -1) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Item not found in cart" });
+    }
+
+    // If quantity > 1, decrease by 1; otherwise, remove from cart
+    if (cart.items[itemIndex].quantity > 1) {
+      cart.items[itemIndex].quantity -= 1;
+    } else {
+      cart.items.splice(itemIndex, 1); // Remove the item
+    }
 
     await cart.save();
     await cart.populate("items.productId"); // Ensure updated cart details

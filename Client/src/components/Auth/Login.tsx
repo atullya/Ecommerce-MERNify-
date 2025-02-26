@@ -69,7 +69,7 @@ const Login: React.FC = () => {
           localStorage.setItem("loggedInUser", email);
           localStorage.setItem("userId", response.data._id);
 
-          toast.success("Login successful!");
+            // toast.success("Login successful!");
           setLoggedInUser(email); // Also update state
 
           return;

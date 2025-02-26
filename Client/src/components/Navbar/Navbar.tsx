@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Logo from "../../assets/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Login from "../Auth/Login";
 import shopping from "../../assets/shopping-cart.gif";
 import { useProductContext } from "@/ContextAPI/ProductContext";
@@ -8,12 +8,23 @@ export default function Navbar() {
   const [isToggleOpen, setIsToggleOpen] = useState(false);
   const { totalItemInCart } = useProductContext();
   const [userEmail, setUserEmail] = useState("");
+  const [accessToken, setAccessToken] = useState("");
+  const navigate = useNavigate();
   useEffect(() => {
     const email = localStorage.getItem("loggedInUser");
-    if (email) {
-      setUserEmail(email || "");
-    }
+    if (email) setUserEmail(email);
+
+    const token = localStorage.getItem("accessToken");
+    if (token) setAccessToken(token);
   }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setUserEmail("");
+    setAccessToken("");
+
+    navigate("/");
+  };
   return (
     <>
       <div className="border-b border-slate-200 bg-black-100">
@@ -194,16 +205,6 @@ export default function Navbar() {
                   </Link>
                 </div>
               </li>
-              <li role="none" className="flex items-stretch">
-                <a
-                  role="menuitem"
-                  aria-haspopup="false"
-                  className="flex items-center gap-2 py-4 transition-colors duration-300 hover:text-emerald-500 focus:text-emerald-600 focus:outline-none focus-visible:outline-none lg:px-8"
-                  href="javascript:void(0)"
-                >
-                  <span>About</span>
-                </a>
-              </li>
             </ul>
             {/*      <!-- Actions --> */}
             <div className="ml-auto flex items-center justify-end px-6 gap-4 lg:ml-0 lg:flex-1 lg:p-0">
@@ -225,6 +226,16 @@ export default function Navbar() {
                   </span>
                 </div>
               </Link>
+              {accessToken && userEmail ? (
+                <button
+                  onClick={handleLogout}
+                  className="border-2 p-3 ml-4 rounded-[10px] border-b-2 border-gray-500 text-black-500"
+                >
+                  Logout
+                </button>
+              ) : (
+                ""
+              )}
             </div>
           </nav>
         </div>

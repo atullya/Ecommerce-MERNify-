@@ -4,7 +4,7 @@ import { useProductContext } from "@/ContextAPI/ProductContext";
 import { Link, NavLink } from "react-router-dom";
 import esewa from "../.../../../assets/esewa.png";
 import khalti from "../.../../../assets/khalti.png";
-import { get } from "node:http";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "@/App";
 import { toast, ToastContainer } from "react-toastify";
@@ -251,7 +251,12 @@ const CartPage = () => {
               <label className="flex items-center">
                 <NavLink
                   to="/payment"
-                  state={{ totalAmount: price?.totalPrice ?? 0 }}
+                  state={{
+                    productName: cartItem.map(
+                      (item: any) => item.productId.name
+                    ),
+                    totalAmount: price?.totalPrice ?? 0,
+                  }}
                   className="text-blue-500"
                 >
                   <img src={esewa} alt="" className="h-20 w-22" />

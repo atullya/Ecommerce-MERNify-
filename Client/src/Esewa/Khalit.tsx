@@ -12,7 +12,7 @@ export default function KhaltKhaiPayment() {
   const [transactionId, setTransactionId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handlePayment = async (e) => {
+  const handlePayment = async (e:any) => {
     e.preventDefault();
     setIsLoading(true);
 

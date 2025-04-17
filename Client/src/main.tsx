@@ -17,6 +17,7 @@ import Order from "./Admin/Order.tsx";
 import AdminHome from "./Admin/AdminHome.tsx";
 import EsewaPayment from "./Esewa/Esewapayment.tsx";
 import KhaltiPayment from "./Esewa/Khalit.tsx";
+import PaymentSuccess from "./Esewa/PaymentSuccess.tsx";
 const allroutes = createBrowserRouter([
   {
     path: "/",
@@ -58,6 +59,10 @@ const allroutes = createBrowserRouter([
   {
     path: "/khalti",
     element: <KhaltiPayment />,
+  },
+  {
+    path: "/payment-success",
+    element: <PaymentSuccess />,
   },
 ]);
 

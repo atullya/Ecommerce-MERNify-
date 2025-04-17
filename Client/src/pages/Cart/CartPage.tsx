@@ -37,6 +37,8 @@ const CartPage = () => {
         setPrice(res.data);
         console.log(res.data.totalPrice);
         console.log(res.data.cart.items);
+        // console.log();
+        localStorage.setItem("totalCartItem", res.data.cart.items.length);
         console.log(res.data.cart.items[0].productId.name);
         setCartItem(res.data.cart.items); // Set the extracted products
       } else {

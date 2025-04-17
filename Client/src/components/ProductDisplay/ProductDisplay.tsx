@@ -11,7 +11,7 @@ const ProductDisplay = () => {
   const { products, addToCart, cart } = useProductContext(); // Destructure cart from context
   const { id } = useParams<{ id: string }>();
   const product = products.find((el) => el._id === id);
-
+  console.log(product);
   useEffect(() => {
     console.log("Cart Contents:", cart);
   }, [cart]); // Logs whenever cart changes
@@ -110,14 +110,16 @@ const ProductDisplay = () => {
                 Select Size
               </h2>
               <div className="flex gap-3 mt-4">
-                {product.sizes.map((size, index) => (
-                  <div
-                    key={index}
-                    className="px-4 py-2 bg-gray-50 border border-gray-200 rounded cursor-pointer text-sm lg:text-base"
-                  >
-                    {size}
-                  </div>
-                ))}
+                <ul className="flex flex-wrap gap-2">
+                  {product.sizes[0]?.split(",").map((size, index) => (
+                    <li
+                      key={index}
+                      className="px-4 py-2 bg-gray-50 border border-gray-200 rounded cursor-pointer text-sm lg:text-base list-none"
+                    >
+                      {size}
+                    </li>
+                  ))}
+                </ul>
               </div>
               <button
                 onClick={handleAddToCart}

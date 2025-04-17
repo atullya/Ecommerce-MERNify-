@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import userRoutes from "./routes/user.route.js";
 import adminRoutes from "./routes/admin.routes.js";
+import paymentRoutes from "./routes/newOrderRoutes.js";
 import { connectDB } from "./db/dbConnection.js";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -92,6 +93,7 @@ app.post("/api/initiate-payment", async (req, res) => {
 app.use("/api/auth", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/payment", paymentRoutes);
 // Default Route
 app.get("/", (req, res) => {
   res.send("Hello, Server is running!");

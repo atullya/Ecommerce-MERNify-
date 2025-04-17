@@ -68,7 +68,7 @@ const EsewaPayment: React.FC = () => {
     e.preventDefault();
 
     const { amount, productName, transactionId } = formData;
-
+    localStorage.setItem("totalAmount", amount);
     const signature = await generateEsewaSignature(
       "8gBm/:&EnhH.1/q",
       amount,
@@ -88,7 +88,7 @@ const EsewaPayment: React.FC = () => {
       product_code: "EPAYTEST",
       product_service_charge: "0",
       product_delivery_charge: "0",
-      success_url: "http://yourdomain.com/payment-success",
+      success_url: "http://localhost:5173/payment-success",
       failure_url: "http://yourdomain.com/payment-failure",
       signed_field_names: "total_amount,transaction_uuid,product_code",
       signature,
@@ -120,7 +120,6 @@ const EsewaPayment: React.FC = () => {
               <li>{productName}</li>
             )}
           </ul>
-          <div className="mt-4 font-bold">Total: Rs {formData.amount}</div>
         </div>
 
         {/* Payment Form */}

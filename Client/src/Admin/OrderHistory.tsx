@@ -1,91 +1,46 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 interface Order {
-  id: number;
-  name: string;
-  payment: string;
-  timeRemaining: string;
-  type: string;
+  _id: string;
+  userId: {
+    _id: string;
+    username: string;
+    email: string;
+  };
+  createdAt: string;
   status: string;
-  total: string;
+  amount: number;
 }
-
-const orders: Order[] = [
-  {
-    id: 2632,
-    name: "Brooklyn Zoe",
-    payment: "Cash",
-    timeRemaining: "13 min",
-    type: "Delivery",
-    status: "Delivered",
-    total: "£12.00",
-  },
-  {
-    id: 2633,
-    name: "Alice Krejčová",
-    payment: "Paid",
-    timeRemaining: "49 min",
-    type: "Collection",
-    status: "Collected",
-    total: "£14.00",
-  },
-  {
-    id: 2634,
-    name: "Jurriaan van",
-    payment: "Cash",
-    timeRemaining: "07 min",
-    type: "Delivery",
-    status: "Cancelled",
-    total: "£18.00",
-  },
-  {
-    id: 2635,
-    name: "Ya Chin-Ho",
-    payment: "Cash",
-    timeRemaining: "49 min",
-    type: "Collection",
-    status: "Collected",
-    total: "£26.00",
-  },
-  {
-    id: 2636,
-    name: "Shaamikh Al",
-    payment: "Cash",
-    timeRemaining: "13 min",
-    type: "Delivery",
-    status: "Delivered",
-    total: "£08.00",
-  },
-  {
-    id: 2637,
-    name: "Niek Bove",
-    payment: "Paid",
-    timeRemaining: "00 min",
-    type: "Collection",
-    status: "Cancelled",
-    total: "£15.00",
-  },
-  {
-    id: 2638,
-    name: "Urewa Himona",
-    payment: "Cash",
-    timeRemaining: "15 min",
-    type: "Delivery",
-    status: "Delivered",
-    total: "£19.00",
-  },
-];
 
 const OrderHistory: React.FC = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [orderDetails, setOrderDetails] = useState<Order[]>([]);
 
   const handleDateChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     setFunc: React.Dispatch<React.SetStateAction<string>>
   ) => {
     setFunc(event.target.value);
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/admin/seeProductPlaced"
+      );
+      const data = response.data;
+      setOrderDetails(data);
+      console.log("Fetched orders:", data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
   };
 
   return (
@@ -107,12 +62,8 @@ const OrderHistory: React.FC = () => {
             All Orders
           </button>
           <button className="bg-gray-300 py-2 px-4 rounded-md">Summary</button>
-          <button className="bg-gray-300 py-2 px-4 rounded-md">
-            Completed
-          </button>
-          <button className="bg-gray-300 py-2 px-4 rounded-md">
-            Cancelled
-          </button>
+          <button className="bg-gray-300 py-2 px-4 rounded-md">Completed</button>
+          <button className="bg-gray-300 py-2 px-4 rounded-md">Cancelled</button>
         </div>
         <div className="flex space-x-2">
           <input
@@ -135,57 +86,62 @@ const OrderHistory: React.FC = () => {
           <tr className="bg-gray-100">
             <th className="border border-gray-300 p-2">Id</th>
             <th className="border border-gray-300 p-2">Name</th>
-            <th className="border border-gray-300 p-2">Payment</th>
-            <th className="border border-gray-300 p-2">Time Remaining</th>
-            <th className="border border-gray-300 p-2">Type</th>
+            <th className="border border-gray-300 p-2">Email</th>
+            <th className="border border-gray-300 p-2">Payment-Type</th>
+            <th className="border border-gray-300 p-2">Ordered-Date</th>
             <th className="border border-gray-300 p-2">Status</th>
             <th className="border border-gray-300 p-2">Total</th>
             <th className="border border-gray-300 p-2">Action</th>
           </tr>
         </thead>
         <tbody>
-          {orders.map((order) => (
-            <tr key={order.id} className="hover:bg-gray-50">
-              <td className="border border-gray-300 p-2">{order.id}</td>
-              <td className="border border-gray-300 p-2">{order.name}</td>
-              <td className="border border-gray-300 p-2">{order.payment}</td>
-              <td className="border border-gray-300 p-2">
-                {order.timeRemaining}
-              </td>
-              <td className="border border-gray-300 p-2">{order.type}</td>
-              <td className="border border-gray-300 p-2">{order.status}</td>
-              <td className="border border-gray-300 p-2">{order.total}</td>
-              <td className="border border-gray-300 p-2">
-                <div className="relative inline-block text-left">
-                  <button
-                    className="bg-gray-200 p-1 rounded-md"
-                    onClick={() =>
-                      setOpenMenuId(openMenuId === order.id ? null : order.id)
-                    }
-                  >
-                    ...
-                  </button>
+          {orderDetails.length > 0 ? (
+            orderDetails.map((order) => (
+              <tr key={order._id} className="hover:bg-gray-50">
+                <td className="border border-gray-300 p-2">{order.userId._id}</td>
+                <td className="border border-gray-300 p-2">{order.userId.username}</td>
+                <td className="border border-gray-300 p-2">{order.userId.email}</td>
+                <td className="border border-gray-300 p-2">E-sewa</td>
+                <td className="border border-gray-300 p-2">{new Date(order.createdAt).toLocaleDateString()}</td>
+                <td className="border border-gray-300 p-2">{order.status}</td>
+                <td className="border border-gray-300 p-2">{order.amount}</td>
+                <td className="border border-gray-300 p-2">
+                  <div className="relative inline-block text-left">
+                    <button
+                      className="bg-gray-200 p-1 rounded-md"
+                      onClick={() =>
+                        setOpenMenuId(openMenuId === order._id ? null : order._id)
+                      }
+                    >
+                      ...
+                    </button>
 
-                  {openMenuId === order.id && (
-                    <div className="absolute right-[-100px] z-10 mt-2 w-32   origin-top-right bg-white border border-gray-300 rounded-md shadow-lg">
-                      <div className="py-1">
-                        <button className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-gray-100">
-                          Refund
-                        </button>
-
-                        <button className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-gray-100">
-                          Cancel
-                        </button>
-                        <button className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-gray-100">
-                          Message
-                        </button>
+                    {openMenuId === order._id && (
+                      <div className="absolute right-[-100px] z-10 mt-2 w-32 origin-top-right bg-white border border-gray-300 rounded-md shadow-lg">
+                        <div className="py-1">
+                          <button className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-gray-100">
+                            Refund
+                          </button>
+                          <button className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-gray-100">
+                            Cancel
+                          </button>
+                          <button className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-gray-100">
+                            Message
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td className="text-center p-4" colSpan={8}>
+                No Data Available
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 

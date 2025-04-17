@@ -1,6 +1,7 @@
 import express from "express";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { checkAdmin } from "../middleware/admin.middleware.js";
+import Order from "../models/order.model.js";
 import {
   deleteProduct,
   getProducts,
@@ -26,5 +27,19 @@ adminRoutes.post(
 adminRoutes.get("/products", getProducts);
 adminRoutes.delete("/delete/:id", deleteProduct);
 adminRoutes.patch("/update/:id", updateProduct);
+adminRoutes.get(
+  "/seeProductPlaced",
 
+  async (req, res) => {
+    try {
+      const orders = await Order.find()
+        .populate("userId", "username email")
+        .populate("items.productId", "name price");
+      res.status(200).json(orders);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      res.status(500).json({ message: "Server error fetching orders." });
+    }
+  }
+);
 export default adminRoutes;

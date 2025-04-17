@@ -1,6 +1,7 @@
 import "./App.css";
 import Banner from "./components/Banner/Banner";
 import CarouselWithDelay from "./components/CarouselPlugin/Carousel";
+import Footer from "./components/Footer/Footer";
 import Hero from "./components/Hero/Hero";
 
 import Navbar from "./components/Navbar/Navbar";
@@ -14,6 +15,7 @@ function App() {
       <Hero />
       <Home />
       <Banner />
+      <Footer/>
     </>
   );
 }

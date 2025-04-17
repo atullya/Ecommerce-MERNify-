@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Logo from "../../assets/logo.png";
+import Logo from "../../assets/logo11.png";
 import { Link, useNavigate } from "react-router-dom";
 import Login from "../Auth/Login";
 import shopping from "../../assets/shopping-cart.gif";
@@ -27,7 +27,7 @@ export default function Navbar() {
   };
   return (
     <>
-      <div className="border-b border-slate-200 bg-black-100">
+      <div className="border-b  border-slate-200 bg-black-100">
         <div className="mx-auto grid w-full max-w-full grid-cols-4 gap-6 px-6 py-2 text-sm text-slate-500 md:grid-cols-8 lg:max-w-5xl lg:grid-cols-12 xl:max-w-7xl 2xl:max-w-[96rem]">
           <div className="col-span-2 items-center md:col-span-4 lg:col-span-6">
             <a className="flex items-center gap-2 transition-colors duration-300 hover:text-emerald-500">
@@ -124,7 +124,7 @@ export default function Navbar() {
       </div>
 
       {/*<!-- Header --> */}
-      <header className=" relative z-20 w-full border-b border-slate-200 bg-white/90 shadow-lg shadow-slate-700/5 after:absolute after:left-0 after:top-full after:z-10 after:block after:h-px after:w-full after:bg-slate-200 lg:border-slate-200 lg:backdrop-blur-sm lg:after:hidden">
+      <header className=" relative z-20 w-full border-b border-slate-200 bg-white/90 shadow-lg shadow-slate-700/5 after:absolute after:left-0 after:top-full after:z-10 after:block after:h-px after:w-full  after:bg-slate-200 lg:border-slate-200 lg:backdrop-blur-sm lg:after:hidden">
         <div className="relative mx-auto max-w-full px-6 lg:max-w-5xl xl:max-w-7xl 2xl:max-w-[96rem]">
           <nav
             aria-label="main navigation"

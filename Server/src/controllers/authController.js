@@ -121,3 +121,50 @@ export const checkAuth = (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const editUser = async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    const userId = req.user._id;
+    console.log("userId", userId);
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters long",
+      });
+    }
+    return res.status(200).json({ message: "hello" });
+    // const hashedPassword = await bcrypt.hash(password, 10);
+    // const updatedUser = await User.findByIdAndUpdate(
+    //   userId,
+    //   {
+    //     username,
+    //     email,
+    //     password: hashedPassword,
+    //     role,
+    //   },
+    //   { new: true }
+    // );
+    // if (updatedUser) {
+    //   return res.status(200).json({
+    //     success: true,
+    //     message: "User updated successfully",
+    //     user: updatedUser,
+    //   });
+    // } else {
+    //   return res.status(401).json({
+    //     success: false,
+    //     message: "User update failed",
+    //   });
+    // }
+  } catch (error) {
+    console.log("Error in editUser", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};

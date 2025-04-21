@@ -10,11 +10,12 @@ const Carousel = () => {
   // Array of random image URLs
   const slides = [
     banner1, 
-   banner2,
- banner3,
-    "https://picsum.photos/800/400?random=4", // Random image 4
-    "https://picsum.photos/800/400?random=5", // Random image 5
+    banner2,
+    banner3,
+    "https://images.unsplash.com/photo-1542838686-1cf6624b9987?ixlib=rb-4.0.3&auto=format&fit=crop&w=1400&q=80", // E-commerce banner: shopping bag & offers
+    "https://images.unsplash.com/photo-1607013251379-5d8cfd24c893?ixlib=rb-4.0.3&auto=format&fit=crop&w=1400&q=80", // E-commerce banner: product showcase
   ];
+  
 
   // Handle the previous and next slide logic
   const goToPrevious = () => {

@@ -67,8 +67,16 @@ const EsewaPayment: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
+    // ✅ Check if already paid
+    const isPayed = localStorage.getItem("isPayed");
+    if (isPayed === "true") {
+      alert("Already paid.");
+      return; // stop the function
+    }
+
     const { amount, productName, transactionId } = formData;
     localStorage.setItem("totalAmount", amount);
+
     const signature = await generateEsewaSignature(
       "8gBm/:&EnhH.1/q",
       amount,
@@ -89,7 +97,8 @@ const EsewaPayment: React.FC = () => {
       product_service_charge: "0",
       product_delivery_charge: "0",
       success_url: "http://localhost:5173/payment-success",
-      failure_url: "http://yourdomain.com/payment-failure",
+      failure_url: "http://localhost:5173/payment-failure",
+     
       signed_field_names: "total_amount,transaction_uuid,product_code",
       signature,
     };

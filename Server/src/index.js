@@ -57,7 +57,7 @@ app.post("/api/initiate-payment", async (req, res) => {
     }
 
     const khaltiConfig = {
-      return_url: "http://localhost:5173/",
+      return_url: "http://localhost:5173/payment-success",
       website_url: "http://localhost:5173",
       amount: amount * 100, // Convert to paisa
       purchase_order_id,

@@ -24,7 +24,7 @@ const ProductDisplay = () => {
     const token = getTokenFromLocalStorage();
     if (!token) {
       toast.info("Please Login to add to cart");
-      // alert("Please Login to add to cart");
+
       return;
     }
     addToCart(product);
@@ -38,18 +38,6 @@ const ProductDisplay = () => {
           {/* Image Section */}
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex flex-row lg:flex-col gap-2">
-              {/* {product.image?.length > 0 ? (
-                        <img
-                          src={`http://localhost:3000/${product.image[0].replace(
-                            /\\/g,
-                            "/"
-                          )}`}
-                          alt={product.name}
-                        className="h-20 lg:h-24 w-20 lg:w-24 object-cover"
-                        />
-                      ) : (
-                        <span>No Image</span>
-                      )} */}
               {product.image.map((img, index) => (
                 <div key={index}>
                   <img
@@ -62,14 +50,6 @@ const ProductDisplay = () => {
                   />
                 </div>
               ))}
-              {/* {product.image.map((img, index) => (
-                <img
-                  key={index}
-                  className="h-20 lg:h-24 w-20 lg:w-24 object-cover"
-                  src={img}
-                  alt={`${product.name} - ${index + 1}`}
-                />
-              ))} */}
             </div>
             <div>
               <img
@@ -101,8 +81,10 @@ const ProductDisplay = () => {
               <p>(111)</p>
             </div>
             <div className="flex gap-6 my-4 text-lg lg:text-xl font-bold">
-              <div className="text-gray-500 line-through">${product.price}</div>
-              <div className="text-red-500">${product.price}</div>
+              <div className="text-gray-500 line-through">
+                Rs {product.price}
+              </div>
+              <div className="text-red-500">Rs {product.price}</div>
             </div>
             <p className="text-gray-600">{product.description}.</p>
             <div className="mt-5">

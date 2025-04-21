@@ -59,7 +59,7 @@ const Login: React.FC = () => {
       console.log(response.data);
       if (response.data?.message) {
         if (response.data?.role === "admin") {
-          navigate("/adminhome");
+          navigate("/add");
           toast.success("Admin login successful!");
           return;
         }

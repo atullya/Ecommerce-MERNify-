@@ -30,7 +30,9 @@ const Collection = () => {
   const toggleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setCategory((prev) =>
-      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
     );
   };
 
@@ -38,7 +40,9 @@ const Collection = () => {
   const toggleSubCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSubCategory((prev) =>
-      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
     );
   };
 
@@ -145,19 +149,19 @@ const Collection = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
             {filterProducts.map((item) => (
               <div key={item._id}>
-              <Link to={`/product/${item._id}`}>
-              {item.image?.length > 0 ? (
-                        <img
-                          src={`http://localhost:3000/${item.image[0].replace(
-                            /\\/g,
-                            "/"
-                          )}`}
-                          alt={item.name}
-                           className="h-80 w-72 object-cover rounded-t-xl"
-                        />
-                      ) : (
-                        <span>No Image</span>
-                      )}
+                <Link to={`/product/${item._id}`}>
+                  {item.image?.length > 0 ? (
+                    <img
+                      src={`http://localhost:3000/${item.image[0].replace(
+                        /\\/g,
+                        "/"
+                      )}`}
+                      alt={item.name}
+                      className="h-80 w-72 object-cover rounded-t-xl"
+                    />
+                  ) : (
+                    <span>No Image</span>
+                  )}
                   {/* <img
                     src={item.image[0]} // Assumes `item.image` is an array, displaying the first image
                     alt={item.name}
@@ -168,15 +172,15 @@ const Collection = () => {
                       {item.subCategory}
                     </span>
                     <p className="text-lg font-bold text-black truncate block capitalize">
-                      {item.name.slice(0,20)}
+                      {item.name.slice(0, 20)}
                     </p>
                     <div className="flex items-center">
                       <p className="text-lg font-semibold text-black cursor-auto my-3">
-                        {`$${item.price}`}
+                        {`Rs ${item.price}`}
                       </p>
                     </div>
                   </div>
-             </Link>
+                </Link>
               </div>
             ))}
           </div>

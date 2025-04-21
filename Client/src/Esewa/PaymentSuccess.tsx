@@ -8,12 +8,14 @@ const PaymentSuccess: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // ✅ Immediately set isPayed = true
+    localStorage.setItem("isPayed", "true");
+
     const savePayment = async () => {
       try {
         const totalAmnt = localStorage.getItem("totalAmount");
         const amt = totalAmnt;
-        const rid = "hardcoded-transaction-id-123";
-        const pid = "hardcoded-product-id-456";
+        const pid = "hardcoded-product-id-456"; // (You can also make this dynamic if needed)
         const scd = "EPAYTEST";
 
         const userId = localStorage.getItem("userId");
@@ -22,6 +24,10 @@ const PaymentSuccess: React.FC = () => {
           console.error("User ID not found in localStorage.");
           return;
         }
+
+        // ✅ Generate unique rid
+        const timestamp = Date.now(); // current time in milliseconds
+        const rid = `${userId}-${timestamp}`;
 
         await axios.post("http://localhost:3000/api/payment/payment-success", {
           amt,
@@ -39,14 +45,11 @@ const PaymentSuccess: React.FC = () => {
 
     savePayment();
 
-    // 🚀 Always start timer independently after component loads
     const timer = setTimeout(() => {
       navigate("/");
-    }, 4000); // 4 seconds
+    }, 4000);
 
-    // Cleanup timer when component unmounts
     return () => clearTimeout(timer);
-
   }, [location, navigate]);
 
   return (

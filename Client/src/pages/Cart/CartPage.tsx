@@ -4,17 +4,27 @@ import { useProductContext } from "@/ContextAPI/ProductContext";
 import { Link, NavLink } from "react-router-dom";
 import esewa from "../.../../../assets/esewa.png";
 import khalti from "../.../../../assets/khalti.png";
-import { useLocation } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { BASE_URL } from "@/App";
-import { toast, ToastContainer } from "react-toastify";
+
+interface CartItem {
+  productId: {
+    _id: string;
+    name: string;
+    price: number;
+    image: string[];
+  };
+  quantity: number;
+}
+
 const CartPage = () => {
   const { cart, removeFromCart, updateCartQuantity, getTotalCartAmount } =
     useProductContext();
-  const [cartItem, setCartItem] = useState([]);
-
-  const [price, setPrice] = useState<{ totalPrice: number } | null>(null);
-  // Modal State
+  const [cartItem, setCartItem] = useState<CartItem[]>([]);
+  const [promoCode, setPromoCode] = useState("");
+  let [price, setPrice] = useState<{ totalPrice: number } | null>(null);
+  const [isPromoApplied, setIsPromoApplied] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState("");
 
@@ -25,24 +35,24 @@ const CartPage = () => {
   let loadCartItem = async () => {
     try {
       const userId = localStorage.getItem("userId");
-      let res = await axios.get(`http://localhost:3000/api/cart/${userId}`, {
+      if (!userId) {
+        console.log("User ID not found in localStorage");
+        return;
+      }
+      
+      // Make sure your API URL is correct
+      const res = await axios.get(`http://localhost:3000/api/cart/${userId}`, {
         withCredentials: true,
       });
 
-      console.log("cart response", res.data); // Log full response to verify structure
+      console.log("Cart Response:", res.data);
 
       if (res.data.cart && res.data.cart.items) {
-        console.log(res.data);
-
-        setPrice(res.data);
-        console.log(res.data.totalPrice);
-        console.log(res.data.cart.items);
-        // console.log();
-        localStorage.setItem("totalCartItem", res.data.cart.items.length);
-        console.log(res.data.cart.items[0].productId.name);
-        setCartItem(res.data.cart.items); // Set the extracted products
+        setPrice(res.data); // Set total price
+        setCartItem(res.data.cart.items); // Set the cart items
+        localStorage.setItem("totalCartItem", res.data.cart.items.length.toString());
       } else {
-        console.log("Cart items not found in response");
+        console.log("No cart items found");
       }
     } catch (error) {
       console.log("Error fetching cart:", error);
@@ -53,7 +63,7 @@ const CartPage = () => {
     loadCartItem();
   }, []);
 
-  const calculateTotal = (product: any) => product.price * product.quantity;
+
 
   const handleQuantityChange = async (productId: string, quantity: number) => {
     if (quantity > 0) {
@@ -75,52 +85,61 @@ const CartPage = () => {
   };
 
   const handleProceedToCheckout = () => {
-    if (cartItem.length == 0) {
+    if (cartItem.length === 0) {
       alert("Cart is empty");
       return;
     }
     setIsModalOpen(true);
   };
 
-  const deleteCart = async (productId: any) => {
+  const deleteCart = async (productId: string) => {
     try {
       const userId = localStorage.getItem("userId");
-
       if (!userId) {
         console.log("User ID is missing");
         return;
       }
 
-      // Send data in the body under 'data'
       let res = await axios.delete("http://localhost:3000/api/cart/remove", {
-        data: { userId, productId }, // Send data in the request body
+        data: { userId, productId },
       });
 
-      console.log(res.data); // Log the response to check for success or error
+      console.log(res.data);
       if (res.data.success) {
         toast.success("Product Deleted Successfully");
-        loadCartItem();
+        setCartItem(cartItem.filter((item) => item.productId._id !== productId));
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error deleting cart item:", error);
     }
   };
 
-  const handlePayment = () => {
-    if (!selectedPayment) {
-      alert("Please select a payment method.");
+  const handlePromo = () => {
+    if (isPromoApplied) {
+      alert("Promo code has already been applied.");
       return;
     }
-    alert(`Processing payment with ${selectedPayment}`);
-    setIsModalOpen(false);
+
+    if (promoCode === "MERN") {
+      const currentPrice = price?.totalPrice ?? 0;
+      const discount = currentPrice * 0.1;
+      const newPrice = currentPrice - discount;
+      setPrice({ totalPrice: newPrice });
+      setIsPromoApplied(true);
+      setPromoCode(""); // Clear promo code input
+      toast.success("Promo code applied successfully!");
+    } else {
+      toast.error("Invalid promo code.");
+    }
   };
 
   return (
     <div>
       <Navbar />
+
       <div className="container mx-auto mt-8 px-4">
         <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
-        {cartItem.length == 0 ? (
+        {cartItem.length === 0 ? (
           <p className="text-gray-500">Your cart is empty.</p>
         ) : (
           <div className="overflow-x-auto">
@@ -174,9 +193,7 @@ const CartPage = () => {
                     <td className="border border-gray-300 px-4 py-2 text-center">
                       <button
                         className="text-red-500 hover:text-red-700"
-                        onClick={(e) => {
-                          deleteCart(product.productId._id);
-                        }}
+                        onClick={() => deleteCart(product.productId._id)}
                       >
                         &#x2715;
                       </button>
@@ -209,22 +226,12 @@ const CartPage = () => {
               <h3> Rs. {price?.totalPrice ?? 0}</h3>
             </div>
           </div>
-          {getTotalCartAmount() == 0 ? (
-            <button
-              onClick={handleProceedToCheckout}
-              // disabled
-              className="w-60 h-14 bg-red-500 text-white font-semibold text-lg border-none outline-none cursor-pointer"
-            >
-              Proceed to Checkout
-            </button>
-          ) : (
-            <button
-              onClick={handleProceedToCheckout}
-              className="w-60 h-14 bg-red-500 text-white font-semibold text-lg border-none outline-none cursor-pointer"
-            >
-              Proceed to Checkout
-            </button>
-          )}
+          <button
+            onClick={handleProceedToCheckout}
+            className="w-60 h-14 bg-red-500 text-white font-semibold text-lg border-none outline-none cursor-pointer"
+          >
+            Proceed to Checkout
+          </button>
         </div>
 
         {/* Promo Code Section */}
@@ -234,9 +241,14 @@ const CartPage = () => {
             <input
               type="text"
               placeholder="Promo code"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
               className="bg-transparent border-none outline-none w-[330px] h-full text-lg"
             />
-            <button className="w-40 h-full bg-black text-white text-lg cursor-pointer">
+            <button
+              onClick={handlePromo}
+              className="w-40 h-full bg-black text-white text-lg cursor-pointer"
+            >
               Submit
             </button>
           </div>
@@ -267,8 +279,13 @@ const CartPage = () => {
 
               <label className="flex items-center">
                 <NavLink
-                  to={"/khalti"}
-                  state={{ totalAmount: price?.totalPrice ?? 0 }}
+                  to="/khalti"
+                  state={{
+                    productName: cartItem.map(
+                      (item: any) => item.productId.name
+                    ),
+                    totalAmount: price?.totalPrice ?? 0,
+                  }}
                   className="text-blue-500"
                 >
                   <img src={khalti} alt="" className="h-30 w-32 ml-2" />
@@ -283,17 +300,10 @@ const CartPage = () => {
               >
                 Cancel
               </button>
-              {/* <button
-                  onClick={handlePayment}
-                  className="px-4 py-2 bg-red-500 text-white rounded"
-                >
-                  Pay Now
-                </button> */}
             </div>
           </div>
         </div>
       )}
-      <ToastContainer />
     </div>
   );
 };

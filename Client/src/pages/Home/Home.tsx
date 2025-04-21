@@ -7,7 +7,7 @@ const Home = () => {
   console.log("Products:", products); // Debugging
 
   return (
-    <div>
+    <div className="homeSection">
       <h1 className="text-center mt-4 text-3xl font-bold text-indigo-600 underline decoration-dotted decoration-indigo-400 ">
         Latest
       </h1>
@@ -24,18 +24,18 @@ const Home = () => {
             >
               <Link to={`/product/${item._id}`}>
                 <div>
-                {item.image?.length > 0 ? (
-                        <img
-                          src={`http://localhost:3000/${item.image[0].replace(
-                            /\\/g,
-                            "/"
-                          )}`}
-                          alt={item.name}
-                            className="h-80 w-72 object-cover rounded-t-xl"
-                        />
-                      ) : (
-                        <span>No Image</span>
-                      )}
+                  {item.image?.length > 0 ? (
+                    <img
+                      src={`http://localhost:3000/${item.image[0].replace(
+                        /\\/g,
+                        "/"
+                      )}`}
+                      alt={item.name}
+                      className="h-80 w-72 object-cover rounded-t-xl"
+                    />
+                  ) : (
+                    <span>No Image</span>
+                  )}
                   {/* <img
                     src={item.image[0]} // Assumes `item.image` is an array, displaying the first image
                     alt="Product"

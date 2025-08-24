@@ -60,7 +60,9 @@ const OrderHistory: React.FC = () => {
     try {
       if (newStatus === "Cancelled") {
         // Call your DELETE API
-        await axios.delete(`http://localhost:3000/api/admin/cancel-order/${orderId}`);
+        await axios.delete(
+          `http://localhost:3000/api/admin/cancel-order/${orderId}`
+        );
       } else {
         // Otherwise normal PATCH update
         await axios.patch(
@@ -84,10 +86,7 @@ const OrderHistory: React.FC = () => {
     switch (status) {
       case "Pending":
         return "text-yellow-500 bg-yellow-100";
-      case "Processing":
-        return "text-blue-500 bg-blue-100";
-      case "Delivered":
-        return "text-green-500 bg-green-100";
+
       case "Cancelled":
         return "text-red-500 bg-red-100";
       default:
@@ -118,18 +117,7 @@ const OrderHistory: React.FC = () => {
           >
             All Orders
           </button>
-          <button
-            onClick={() => alert("Processing filter not implemented yet")}
-            className="py-2 px-4 rounded-md bg-gray-300"
-          >
-            Processing
-          </button>
-          <button
-            onClick={() => alert("Completed filter not implemented yet")}
-            className="py-2 px-4 rounded-md bg-gray-300"
-          >
-            Completed
-          </button>
+
           <button
             onClick={fetchCancelledOrders}
             className={`py-2 px-4 rounded-md ${
@@ -163,7 +151,7 @@ const OrderHistory: React.FC = () => {
             <th className="border border-gray-300 p-2">Id</th>
             <th className="border border-gray-300 p-2">Name</th>
             <th className="border border-gray-300 p-2">Email</th>
-     
+
             <th className="border border-gray-300 p-2">Ordered-Date</th>
             <th className="border border-gray-300 p-2">Status</th>
             <th className="border border-gray-300 p-2">Total</th>
@@ -183,7 +171,7 @@ const OrderHistory: React.FC = () => {
                 <td className="border border-gray-300 p-2">
                   {order.userId.email}
                 </td>
-       
+
                 <td className="border border-gray-300 p-2">
                   {new Date(order.createdAt).toLocaleDateString()}
                 </td>
@@ -262,11 +250,6 @@ const OrderHistory: React.FC = () => {
           )}
         </tbody>
       </table>
-
-      <div className="flex items-center mt-4">
-        <label className="mr-2">Busy Mode</label>
-        <input type="checkbox" className="toggle" />
-      </div>
     </div>
   );
 };

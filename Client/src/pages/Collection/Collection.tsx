@@ -18,7 +18,7 @@ interface Product {
   bestseller: boolean;
 }
 
-const Collection = () => {
+const  Collection = () => {
   const { products } = useProductContext();
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState<Product[]>(products);

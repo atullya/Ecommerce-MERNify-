@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 export const connectDB = async () => {
   try {
-    const conn = await mongoose.connect("mongodb://127.0.0.1:27017/ecommerce");
-
-    console.log("MongoDB connection successful!!");
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+    console.log(`MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
-    console.log("Error in connection", error);
+    console.error("Error in connection:", error.message);
+    process.exit(1); // Exit on DB failure instead of silently continuing
   }
 };

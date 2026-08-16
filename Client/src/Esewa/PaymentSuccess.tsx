@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import check from "../assets/check.png";
+import { getApiUrl } from "@/lib/api";
 
 const PaymentSuccess: React.FC = () => {
   const location = useLocation();
@@ -29,7 +30,7 @@ const PaymentSuccess: React.FC = () => {
         const timestamp = Date.now(); // current time in milliseconds
         const rid = `${userId}-${timestamp}`;
 
-        await axios.post("http://localhost:3000/api/payment/payment-success", {
+        await axios.post(getApiUrl("/api/payment/payment-success"), {
           amt,
           rid,
           pid,

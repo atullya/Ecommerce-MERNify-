@@ -9,7 +9,10 @@ import "react-toastify/dist/ReactToastify.css";
 import Navbar from "./components/Navbar/Navbar";
 import NewsLetter from "./components/NewsLetter/NewsLetter";
 import Home from "./pages/Home/Home";
-export const BASE_URL = `http://localhost:3000`;
+
+// Use environment variable or fallback to localhost
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+
 function App() {
   return (
     <>

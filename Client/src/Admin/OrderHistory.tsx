@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { GoDotFill } from "react-icons/go";
+import { getApiUrl } from "@/lib/api";
 
 interface Order {
   _id: string;
@@ -35,7 +36,7 @@ const OrderHistory: React.FC = () => {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/admin/seeProductPlaced"
+        getApiUrl("/api/admin/seeProductPlaced")
       );
       setOrderDetails(response.data);
       setCurrentFilter("All");
@@ -47,7 +48,7 @@ const OrderHistory: React.FC = () => {
   const fetchCancelledOrders = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/admin/seeCancelledOrders"
+        getApiUrl("/api/admin/seeCancelledOrders")
       );
       setOrderDetails(response.data);
       setCurrentFilter("Cancelled");
@@ -61,12 +62,12 @@ const OrderHistory: React.FC = () => {
       if (newStatus === "Cancelled") {
         // Call your DELETE API
         await axios.delete(
-          `http://localhost:3000/api/admin/cancel-order/${orderId}`
+          getApiUrl(`/api/admin/cancel-order/${orderId}`)
         );
       } else {
         // Otherwise normal PATCH update
         await axios.patch(
-          `http://localhost:3000/api/admin/update-order-status/${orderId}`,
+          getApiUrl(`/api/admin/update-order-status/${orderId}`),
           { status: newStatus }
         );
       }

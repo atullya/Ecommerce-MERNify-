@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import { useProductContext } from "@/ContextAPI/ProductContext";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getImageUrl } from "@/lib/api";
 
 // Define the Product interface
 interface Product {
@@ -152,10 +153,7 @@ const  Collection = () => {
                 <Link to={`/product/${item._id}`}>
                   {item.image?.length > 0 ? (
                     <img
-                      src={`http://localhost:3000/${item.image[0].replace(
-                        /\\/g,
-                        "/"
-                      )}`}
+                      src={getImageUrl(item.image[0])}
                       alt={item.name}
                       className="h-80 w-72 object-cover rounded-t-xl"
                     />

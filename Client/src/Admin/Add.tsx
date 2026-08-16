@@ -4,6 +4,7 @@ import upload_area from "@/assets/upload_area.png";
 import AdminNavbar from "./AdminCompoenents/AdminNavbar";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import { getApiUrl } from "@/lib/api";
 
 const Add = () => {
   const [images, setImages] = useState<(File | null)[]>([
@@ -70,7 +71,7 @@ const Add = () => {
       });
 
       const res = await axios.post(
-        "http://localhost:3000/api/admin/upload",
+        getApiUrl("/api/admin/upload"),
         formData,
         {
           headers: {

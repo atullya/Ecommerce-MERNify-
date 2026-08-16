@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "buildCommand": "cd Client && npm run build",
+  "installCommand": "npm install --prefix Server && npm install --prefix Client",
+  "env": {
+    "MONGO_URI": "@mongo_uri",
+    "KHALTI_SECRET_KEY": "@khalti_secret_key",
+    "FRONTEND_URL": "@frontend_url",
+    "NODE_ENV": "production",
+    "JWT_SECRET": "@jwt_secret"
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/Server/api/index.js"
+    }
+  ],
+  "functions": {
+    "Server/api/index.js": {
+      "runtime": "nodejs20.x",
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  }
+}

@@ -6,8 +6,7 @@ import esewa from "../.../../../assets/esewa.png";
 import khalti from "../.../../../assets/khalti.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
-
+import axios from "axios";import { getApiUrl, getImageUrl } from "@/lib/api";
 interface CartItem {
   productId: {
     _id: string;
@@ -39,9 +38,9 @@ const CartPage = () => {
         console.log("User ID not found in localStorage");
         return;
       }
-      
+
       // Make sure your API URL is correct
-      const res = await axios.get(`http://localhost:3000/api/cart/${userId}`, {
+      const res = await axios.get(getApiUrl(`/api/cart/${userId}`), {
         withCredentials: true,
       });
 
@@ -69,7 +68,7 @@ const CartPage = () => {
     if (quantity > 0) {
       try {
         const userId = localStorage.getItem("userId");
-        const res = await axios.put("http://localhost:3000/api/cart/update", {
+        const res = await axios.put(getApiUrl("/api/cart/update"), {
           userId,
           productId,
           quantity,
@@ -100,7 +99,7 @@ const CartPage = () => {
         return;
       }
 
-      let res = await axios.delete("http://localhost:3000/api/cart/remove", {
+      let res = await axios.delete(getApiUrl("/api/cart/remove"), {
         data: { userId, productId },
       });
 
@@ -159,10 +158,7 @@ const CartPage = () => {
                   <tr key={product.productId._id}>
                     <td className="border border-gray-300 px-4 py-2">
                       <img
-                        src={`http://localhost:3000/${product.productId.image[0].replace(
-                          /\\/g,
-                          "/"
-                        )}`}
+                        src={getImageUrl(product.productId.image[0])}
                         alt={product.productId.name}
                         className="w-20 h-20 object-cover"
                       />

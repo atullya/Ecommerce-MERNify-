@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import { useProductContext } from "@/ContextAPI/ProductContext";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { getApiUrl } from "@/lib/api";
 
 export default function KhaltKhaiPayment() {
   const { getTotalCartAmount } = useProductContext();
@@ -34,7 +35,7 @@ export default function KhaltKhaiPayment() {
       console.log("Request Payload:", payload);
 
       const response = await fetch(
-        "http://localhost:3000/api/initiate-payment",
+        getApiUrl("/api/initiate-payment"),
         {
           method: "POST",
           headers: {

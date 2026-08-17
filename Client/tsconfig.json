@@ -16,6 +16,8 @@
     "target": "ES5",
     "moduleResolution": "node",
     "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
